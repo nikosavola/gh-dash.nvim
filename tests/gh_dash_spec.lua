@@ -6,7 +6,7 @@ describe('gh_dash.nvim', function()
     vim.cmd 'set noswapfile'
     for _, buf in ipairs(vim.api.nvim_list_bufs()) do
       if vim.api.nvim_buf_is_valid(buf) then
-        local ft = vim.api.nvim_buf_get_option(buf, 'filetype')
+        local ft = vim.bo[buf].filetype
         if ft == 'gh_dash' then
           vim.api.nvim_buf_delete(buf, { force = true })
         end
@@ -36,7 +36,7 @@ describe('gh_dash.nvim', function()
     local win = vim.api.nvim_get_current_win()
     local buf = vim.api.nvim_win_get_buf(win)
     assert(vim.api.nvim_buf_is_valid(buf), 'buffer should exist')
-    eq(vim.api.nvim_buf_get_option(buf, 'filetype'), 'gh_dash')
+    eq(vim.bo[buf].filetype, 'gh_dash')
 
     require('gh_dash').close()
   end)

@@ -1,2 +1,4 @@
 luacov.report.out
 luacov.stats.out
+lcov.info
+doc/tags

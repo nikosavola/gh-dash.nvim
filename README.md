@@ -61,5 +61,5 @@ return {
 - Add the following code to show presence of backgrounded gh-dash window in lualine:
 
 ```lua
-require('gh-dash').status() -- drop in to your lualine sections
+require('gh_dash').status() -- drop in to your lualine sections
 ```

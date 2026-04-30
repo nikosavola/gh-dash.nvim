@@ -1,5 +1,7 @@
-local ok, gh_dash = pcall(require, 'gh_dash')
-if not ok then
+-- gh-dash.nvim plugin loader
+-- Does NOT call setup() automatically; the user must call require('gh_dash').setup(opts).
+-- This file only ensures the module is loadable and prevents double-loading.
+if vim.g.loaded_gh_dash then
   return
 end
-gh_dash.setup()
+vim.g.loaded_gh_dash = true
