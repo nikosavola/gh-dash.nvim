@@ -7,9 +7,33 @@ on:
     branches: [main]
 
 jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout plugin
+        uses: actions/checkout@v4
+
+      - name: Run luacheck
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y lua5.1 liblua5.1-0-dev luarocks
+          luarocks --lua-version=5.1 --local install luacheck
+          # $GITHUB_PATH only affects later steps, so call the binary directly
+          "$HOME/.luarocks/bin/luacheck" .
+
+      - name: Run stylua
+        uses: JohnnyMorganz/stylua-action@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          version: latest
+          args: --check .
+
   test:
     name: Neovim ${{ matrix.neovim }}
     runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.neovim == 'nightly' }}
     strategy:
       matrix:
         neovim: ["stable", "v0.10.0", "nightly"]
@@ -44,12 +68,11 @@ jobs:
           mkdir -p ~/.local/share/nvim/site/pack/test/start
           git clone https://github.com/nvim-lua/plenary.nvim ~/.local/share/nvim/site/pack/test/start/plenary.nvim
 
-      - name: Install LuaRocks + luacheck + coverage tools
+      - name: Install LuaRocks + coverage tools
         run: |
           set -euo pipefail
           sudo apt-get update
           sudo apt-get install -y lua5.1 liblua5.1-0-dev luarocks make
-          luarocks --lua-version=5.1 --local install luacheck
           luarocks --lua-version=5.1 --local install luacov
           luarocks --lua-version=5.1 --local install luacov-reporter-lcov
           echo "$HOME/.luarocks/bin" >> "$GITHUB_PATH"
@@ -60,7 +83,7 @@ jobs:
           make coverage
 
       - name: Upload code coverage
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v7
         with:
           files: lcov.info
           disable_search: true

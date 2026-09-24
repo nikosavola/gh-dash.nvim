@@ -14,6 +14,7 @@
 
 ### Installation
 
+- Requires Neovim 0.10+ (the plugin uses `vim.uv`).
 - Install the 'gh' command line tool for your OS from [GitHub CLI](https://cli.github.com/).
 
 e.g. for macOS:
