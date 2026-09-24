@@ -133,9 +133,9 @@ function M.open()
     -- create an unlisted scratch buffer for the terminal
     state.buf = vim.api.nvim_create_buf(false, false)
     -- buffer options
-    vim.api.nvim_buf_set_option(state.buf, 'bufhidden', 'hide')
-    vim.api.nvim_buf_set_option(state.buf, 'swapfile', false)
-    vim.api.nvim_buf_set_option(state.buf, 'filetype', 'gh_dash')
+    vim.api.nvim_set_option_value('bufhidden', 'hide', { buf = state.buf })
+    vim.api.nvim_set_option_value('swapfile', false, { buf = state.buf })
+    vim.api.nvim_set_option_value('filetype', 'gh_dash', { buf = state.buf })
     -- Escape backgrounds the window cleanly
     -- Map <Esc> in terminal mode to hide the popup
     vim.api.nvim_buf_set_keymap(
@@ -171,7 +171,7 @@ function M.open()
           }
           local buf = state.buf
           local ok, result = pcall(vim.fn.termopen, cmd, {
-            cwd = vim.loop.cwd(),
+            cwd = vim.uv.cwd(),
             on_exit = function(_, exit_code, _)
               if state.buf ~= buf then
                 return
@@ -230,7 +230,7 @@ function M.open()
     -- closed or replaced job cannot tear down a newer one
     local buf = state.buf
     local ok, result = pcall(vim.fn.termopen, config.cmd, {
-      cwd = vim.loop.cwd(),
+      cwd = vim.uv.cwd(),
       on_exit = function(_, exit_code, _)
         if state.buf ~= buf then
           return
